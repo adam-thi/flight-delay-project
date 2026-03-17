@@ -21,7 +21,8 @@ The target is:
 
 delay_flag = (DepDelay > 15).astype(int)
 
-
+ 
+ 
 Binary classification problem:
 
 - `0` = not delayed
@@ -145,3 +146,18 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 not sure if you guys have set up python environments before ^ thats how
+
+when i added pushed the project it did not keep the exact folder tree on github because some folders did not have anything and some folders are ignored (.gitignore)
+flight-delay-project/
+├── data/
+│   ├── raw/                  # local raw BTS CSV files, gitignored
+│   └── processed/            # future processed datasets, gitignored
+├── notebooks/
+│   └── 01_baseline_clean.ipynb
+├── outputs/
+│   ├── figures/
+│   └── models/               # model artifacts, gitignored
+├── src/                      
+├── .gitignore
+├── README.md
+└── requirements.txt
