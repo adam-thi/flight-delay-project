@@ -148,6 +148,7 @@ jupyter notebook
 not sure if you guys have set up python environments before ^ thats how
 
 when i added pushed the project it did not keep the exact folder tree on github because some folders did not have anything and some folders are ignored (.gitignore)
+```text
 flight-delay-project/
 ├── data/
 │   ├── raw/                  # local raw BTS CSV files, gitignored
@@ -161,3 +162,4 @@ flight-delay-project/
 ├── .gitignore
 ├── README.md
 └── requirements.txt
+```
