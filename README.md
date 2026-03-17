@@ -8,7 +8,7 @@ The baseline lives in `notebooks/01_baseline_clean.ipynb` and uses only flight d
 
 The notebook reads three BTS monthly flight files from `data/raw/`:
 i got the files from this link: https://www.transtats.bts.gov/prezip/
-look for the files labeled like this On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2022_1.zip
+look for the files labeled like this On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2022_1.zip;
 2022_1 = january 2022 , 2022_2 = feb 2022, etc
 
 - January 2022
@@ -136,7 +136,7 @@ This project is currently meant to be run in a local Python virtual environment 
 - The baseline is run as a notebook, not as a script
 - Raw data is expected under `data/raw/`
 
-Typical setup on Windows PowerShell:
+ setup on Windows PowerShell:
 
 ```powershell
 python -m venv .venv
@@ -144,3 +144,4 @@ python -m venv .venv
 pip install -r requirements.txt
 jupyter notebook
 ```
+not sure if you guys have set up python environments before ^ thats how
