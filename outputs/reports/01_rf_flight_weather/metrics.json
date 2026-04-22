@@ -1,0 +1,9 @@
+{
+  "run_id": "01_rf_flight_weather",
+  "train_year": 2022,
+  "test_year": 2023,
+  "accuracy": 0.6371084156652481,
+  "precision_delay": 0.30932981679461213,
+  "recall_delay": 0.583303730017762,
+  "f1_delay": 0.40427168928692336
+}

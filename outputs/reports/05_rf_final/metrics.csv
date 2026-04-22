@@ -1,0 +1,2 @@
+run_id,train_year,test_year,accuracy,precision_delay,recall_delay,f1_delay
+05_rf_final,2022,2023,0.7002496941332107,0.3729496470519578,0.6205554866239771,0.46589784364024994

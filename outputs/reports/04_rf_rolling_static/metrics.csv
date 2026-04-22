@@ -1,0 +1,2 @@
+run_id,train_year,test_year,accuracy,precision_delay,recall_delay,f1_delay
+04_rf_rolling_static,2022,2023,0.699147834951837,0.37198336540051713,0.621874477393739,0.4655131770298845

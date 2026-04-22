@@ -4,7 +4,9 @@ __pycache__/
 *.pyc
 .DS_Store
 
-data/raw/
-data/processed/
+data/raw/**
+data/processed/**
+!data/processed/flight_delay_power_bi_final.csv
+!data/processed/visualization-power-bi.pbix
 outputs/models/
 notes.md

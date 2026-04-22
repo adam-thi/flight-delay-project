@@ -1,165 +1,159 @@
-# Flight Delay Prediction Baseline
+# Flight Delay Prediction
 
-This repository currently contains a single notebook baseline for predicting whether a flight will depart more than 15 minutes late.
+This project predicts whether a flight will depart more than 15 minutes late.
 
-The baseline lives in `notebooks/01_baseline_clean.ipynb` and uses only flight data from the first three months of 2022.
-
-## Data Used
-
-The notebook reads three BTS monthly flight files from `data/raw/`:
-i got the files from this link: https://www.transtats.bts.gov/prezip/
-look for the files labeled like this On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2022_1.zip;
-2022_1 = january 2022 , 2022_2 = feb 2022, etc
-
-- January 2022
-- February 2022
-- March 2022
-
-Combined raw rows: 1,598,468
-
-The target is:
-
-delay_flag = (DepDelay > 15).astype(int)
-
- 
- 
-Binary classification problem:
+The target is binary:
 
 - `0` = not delayed
 - `1` = delayed
 
-## Cleaning And Preparation
+Right now the project has two parts:
 
-The baseline keeps only the columns needed for the first test:
+- notebooks that show the step-by-step development of the model
+- a `src/` pipeline that runs the strongest version on full data and saves outputs
 
-- `Month`
-- `DayOfWeek`
-- `Reporting_Airline`
-- `Origin`
-- `Dest`
-- `CRSDepTime`
-- `DepDelay`
-- `Cancelled`
+## Data
 
-Cleaning steps:
+Flight data comes from the BTS On-Time Reporting Carrier Performance dataset.
 
-1. Load all three monthly CSV files
-2. Concatenate them into one dataframe
-3. Remove cancelled flights with `Cancelled == 0`
-4. Drop rows missing key training fields
-5. Randomly sample 200,000 rows for faster iteration
-6. Create `delay_flag`
-7. Create `dep_hour = CRSDepTime // 100`
+Current training and testing setup:
 
-After removing cancelled flights and missing values, the notebook has 1,534,734 usable rows before sampling.
+- train on 2022 flight data
+- test on 2023 flight data
+- use weather data for the top 20 origin airports
 
-## Features Used
-
-The model trains on six features:
-
-- `Month`
-- `DayOfWeek`
-- `Reporting_Airline`
-- `Origin`
-- `Dest`
-- `dep_hour`
-
-These are intentionally simple pre-departure features that come directly from the flight data already in the project.
-
-## Training Method
-
-The notebook uses:
-
-- `train_test_split(..., test_size=0.2, stratify=y, random_state=42)`
-- a scikit-learn `ColumnTransformer`
-- `SimpleImputer` for missing values
-- `OneHotEncoder(handle_unknown="ignore")` for categorical columns
-- `RandomForestClassifier`
-
-Model settings:
-
-```python
-RandomForestClassifier(
-    n_estimators=50,
-    max_depth=12,
-    min_samples_leaf=5,
-    class_weight="balanced",
-    random_state=42,
-    n_jobs=-1
-)
-```
-
-The notebook uses `class_weight="balanced"` because delayed flights are the minority class in the sampled data.
-
-## Reports And Outputs
-
-The notebook currently produces:
-
-- a `classification_report`
-- a confusion matrix plot
-- the class distribution of `delay_flag`
-
-Current baseline metrics:
+Main raw-data layout:
 
 ```text
-              precision    recall  f1-score   support
-
-           0       0.87      0.63      0.73     32129
-           1       0.29      0.60      0.39      7871
-
-    accuracy                           0.63     40000
-   macro avg       0.58      0.62      0.56     40000
-weighted avg       0.75      0.63      0.66     40000
+data/
+  raw/
+    flight/
+      2022/
+        2022-01_flight.csv
+        ...
+        2022-12_flight.csv
+      2023/
+        2023-01_flight.csv
+        ...
+        2023-12_flight.csv
+    weather/
+      asos_top20_origins_2022.csv
+      asos_top20_origins_2023.csv
 ```
 
-Confusion matrix:
+## Notebook Flow
 
-```text
-[[20343, 11786],
- [ 3170,  4701]]
+The notebooks are meant to tell the story of the project in order:
+
+1. `01_baseline_clean.ipynb`
+Baseline flight-only model on Jan-March 2022.
+
+2. `02_feature_model_comparison.ipynb`
+Time-based split and model comparison for flight-only features.
+
+3. `03_feature_visualization.ipynb`
+Feature plots and simple visuals for analysis and Power BI prep.
+
+4. `04_weather_model_comparison.ipynb`
+Adds weather data and compares flight-only vs flight+weather.
+
+5. `05_final_prototype_random_forest.ipynb`
+Refines the Random Forest setup for the notebook stage.
+
+6. `06_project_summary.ipynb`
+Short summary of the earlier notebook work.
+
+7. `07_airline_delay_feature_experiment.ipynb`
+Adds rolling airline delay features and shows the biggest improvement.
+
+8. `08_feature_group_ablation.ipynb`
+Tests which feature groups matter most.
+
+## Current `src/` Pipeline
+
+The main script is:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.train_random_forest
 ```
 
-Class balance in the sampled dataset:
+What it does:
 
-- not delayed: 80.32%
-- delayed: 19.68%
+1. loads all 2022 and 2023 flight files
+2. removes cancelled flights and missing key rows
+3. creates the delay target
+4. converts scheduled departure time to local datetime, then UTC
+5. joins the nearest earlier weather report
+6. builds recent rolling airline delay features
+7. trains on 2022 and tests on 2023
+8. saves reports, figures, and the model artifact
 
-## Run The Baseline
+The current `src/` version uses:
 
-Open `notebooks/01_baseline_clean.ipynb` in Jupyter and run the notebook from top to bottom.
+- schedule features like `dep_hour` and `DayOfWeek`
+- route and airline categorical features
+- weather features such as temperature, humidity, wind, visibility, pressure, and precipitation
+- rolling airline and airline-origin delay features from the previous 3 hours
 
-## Environment Setup
+It does **not** use the older static delay-rate features anymore, because the ablation notebook showed they were not helping.
 
-This project is currently meant to be run in a local Python virtual environment with Jupyter.
+## Current Model Result
 
-- Python packages are listed in `requirements.txt`
-- The local virtual environment folder is `.venv/`
-- The baseline is run as a notebook, not as a script
-- Raw data is expected under `data/raw/`
+Recent full pipeline result:
 
- setup on Windows PowerShell:
+- accuracy: about `0.700`
+- delay precision: about `0.373`
+- delay recall: about `0.621`
+- delay F1: about `0.466`
+
+This is not a perfect model, but it is a clear improvement over the early baseline.
+
+The biggest lesson so far is:
+
+- weather helps a little
+- recent airline performance helps a lot
+
+## Outputs
+
+Each pipeline run creates a timestamped folder under `outputs/`.
+
+Example saved artifacts:
+
+- `outputs/models/<run_id>/random_forest_pipeline.joblib`
+- `outputs/reports/<run_id>/metrics.csv`
+- `outputs/reports/<run_id>/metrics.json`
+- `outputs/reports/<run_id>/classification_report.txt`
+- `outputs/reports/<run_id>/confusion_matrix.csv`
+- `outputs/reports/<run_id>/feature_importance.csv`
+- `outputs/figures/<run_id>/confusion_matrix.png`
+
+Runs do not overwrite each other because each run gets a new timestamp folder.
+
+## Environment
+
+This project is set up for a local Python virtual environment on Windows PowerShell.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+```
+
+For notebooks:
+
+```powershell
 jupyter notebook
 ```
-not sure if you guys have set up python environments before ^ thats how
 
-when i added pushed the project it did not keep the exact folder tree on github because some folders did not have anything and some folders are ignored (.gitignore)
-```text
-flight-delay-project/
-├── data/
-│   ├── raw/                  # local raw BTS CSV files, gitignored
-│   └── processed/            # future processed datasets, gitignored
-├── notebooks/
-│   └── 01_baseline_clean.ipynb
-├── outputs/
-│   ├── figures/
-│   └── models/               # model artifacts, gitignored
-├── src/                      
-├── .gitignore
-├── README.md
-└── requirements.txt
+For the current pipeline:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.train_random_forest
 ```
+
+## Project Status
+
+- the notebook sequence shows how the model evolved
+- the `src/` pipeline reproduces the current best setup
+- outputs are saved for reporting and presentation
+

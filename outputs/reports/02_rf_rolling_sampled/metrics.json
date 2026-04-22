@@ -1,0 +1,9 @@
+{
+  "run_id": "02_rf_rolling_sampled",
+  "train_year": 2022,
+  "test_year": 2023,
+  "accuracy": 0.654899608181324,
+  "precision_delay": 0.3212284913965586,
+  "recall_delay": 0.5703374777975133,
+  "f1_delay": 0.41098169717138106
+}

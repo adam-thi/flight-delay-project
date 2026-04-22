@@ -1,0 +1,38 @@
+{
+  "train_year": 2022,
+  "test_year": 2023,
+  "weather_join_tolerance_hours": 2,
+  "numeric_features": [
+    "DayOfWeek",
+    "dep_hour",
+    "is_weekend",
+    "tmpf",
+    "relh",
+    "sknt",
+    "alti",
+    "vsby",
+    "weather_report_age_minutes",
+    "p01i",
+    "airline_delay_rate_prev_3h",
+    "airline_delay_count_prev_3h",
+    "airline_flight_count_prev_3h",
+    "airline_origin_delay_rate_prev_3h",
+    "airline_origin_delay_count_prev_3h",
+    "airline_origin_flight_count_prev_3h"
+  ],
+  "categorical_features": [
+    "Reporting_Airline",
+    "Origin",
+    "Dest",
+    "route",
+    "time_of_day_bin"
+  ],
+  "model_name": "RandomForestClassifier",
+  "model_params": {
+    "n_estimators": 150,
+    "max_depth": 14,
+    "min_samples_leaf": 5,
+    "class_weight": "balanced",
+    "random_state": 42
+  }
+}
