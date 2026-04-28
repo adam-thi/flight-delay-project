@@ -1,0 +1,11 @@
+{
+  "raw_flight_rows_loaded": 6924147,
+  "weather_rows_loaded": 408714,
+  "weather_join_coverage": 0.9997729684248471,
+  "post_weather_feature_rows": 6917948,
+  "train_rows": 3398442,
+  "test_rows": 3519506,
+  "train_delay_rate": 0.21390507767971323,
+  "test_delay_rate": 0.21067615739254317,
+  "origin_airports_used": 20
+}

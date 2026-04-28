@@ -69,6 +69,9 @@ Adds rolling airline delay features and shows the biggest improvement.
 8. `08_feature_group_ablation.ipynb`
 Tests which feature groups matter most.
 
+9. `09_weather_feature_exploration.ipynb`
+Tests stronger weather flags on a sample.
+
 ## Current `src/` Pipeline
 
 The main script is:
@@ -92,7 +95,7 @@ The current `src/` version uses:
 
 - schedule features like `dep_hour` and `DayOfWeek`
 - route and airline categorical features
-- weather features such as temperature, humidity, wind, visibility, pressure, and precipitation
+- raw weather features such as temperature, humidity, wind, visibility, pressure, and precipitation
 - rolling airline and airline-origin delay features from the previous 3 hours
 
 It does **not** use the older static delay-rate features anymore, because the ablation notebook showed they were not helping.
@@ -112,6 +115,8 @@ The biggest lesson so far is:
 
 - weather helps a little
 - recent airline performance helps a lot
+
+Notebook 9 tested stronger engineered weather features. They were useful for exploration, but they did not improve the final full-data model enough to keep in `src/`.
 
 ## Outputs
 
@@ -156,4 +161,3 @@ For the current pipeline:
 - the notebook sequence shows how the model evolved
 - the `src/` pipeline reproduces the current best setup
 - outputs are saved for reporting and presentation
-
